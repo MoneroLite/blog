@@ -1,13 +1,15 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
-import express from 'express';
-import mongoose from 'mongoose';
+import express from 'express'
+import multer from 'multer'
+import mongoose from 'mongoose'
 import {registerValidation, loginValidation} from './validations/auth.js'
-import checkAuth from './utils/authCheck.js'
-import * as UserController from './controllers/UserController.js';
-import * as PostController from './controllers/PostController.js';
-import { postCreateValidation } from './validations/post.js';
+import {checkAuth, handleValidationErrors} from './utils/index.js'
+import {UserController, PostController} from './controllers/index.js'
+import {postCreateValidation} from './validations/post.js'
 
+
+// подключение к бд
 mongoose
 .connect(process.env.DB_CONNECT)
 .then(() => console.log('connect to DB successfully'))
@@ -16,17 +18,39 @@ mongoose
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(express.json())
+// хранилище для файлов
+const storage = multer.diskStorage({ 
+    destination:(_, __, cb) => {
+        cb(null, 'uploads')
+    }, 
+    filename: (_, file, cb) => {
+        cb(null, file.originalname)
+    }, 
+})
 
-app.post('/auth/login',loginValidation, UserController.login)
-app.post('/auth/registration', registerValidation, UserController.register)
+const upload = multer({storage})
+
+// роуты
+
+app.use(express.json())
+app.use('/uploads', express.static('uploads'))
+
+// роут для сохранения картинки
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+    res.json({
+        url: `/uploads/${req.file.originalname}`
+    })
+})
+
+app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login)
+app.post('/auth/registration', registerValidation, handleValidationErrors, UserController.register)
 app.get('/auth/me', checkAuth, UserController.getMe)
 
 app.get('/posts', PostController.getAll)
 app.get('/posts/:id', PostController.getOne)
-app.post('/posts',checkAuth, postCreateValidation, PostController.create)
+app.post('/posts',checkAuth, postCreateValidation, handleValidationErrors, PostController.create)
 app.delete('/posts/:id',checkAuth, PostController.remove)
-app.patch('/posts/:id', checkAuth, PostController.update)
+app.patch('/posts/:id', checkAuth, postCreateValidation, handleValidationErrors, PostController.update)
 
 app.listen(port, (err) => {
     if (err) {
