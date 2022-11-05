@@ -7,7 +7,7 @@ import {registerValidation, loginValidation} from './validations/auth.js'
 import {checkAuth, handleValidationErrors} from './utils/index.js'
 import {UserController, PostController} from './controllers/index.js'
 import {postCreateValidation} from './validations/post.js'
-
+import cors from 'cors'
 
 // подключение к бд
 mongoose
@@ -30,9 +30,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage})
 
-// роуты
-
 app.use(express.json())
+app.use(cors())
 app.use('/uploads', express.static('uploads'))
 
 // роут для сохранения картинки
