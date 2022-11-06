@@ -45,7 +45,10 @@ app.post('/auth/login', loginValidation, handleValidationErrors, UserController.
 app.post('/auth/registration', registerValidation, handleValidationErrors, UserController.register)
 app.get('/auth/me', checkAuth, UserController.getMe)
 
+app.get('/tags', PostController.getLastTags)
+
 app.get('/posts', PostController.getAll)
+app.get('/posts/tags', PostController.getLastTags)
 app.get('/posts/:id', PostController.getOne)
 app.post('/posts',checkAuth, postCreateValidation, handleValidationErrors, PostController.create)
 app.delete('/posts/:id',checkAuth, PostController.remove)
