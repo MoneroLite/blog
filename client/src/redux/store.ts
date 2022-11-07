@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { postRedicer } from "./slices/posts";
+import { postReducer } from "./slices/posts";
+import { authReducer } from "./slices/auth";
 
 const store = configureStore({
     reducer: {
-        posts: postRedicer
+        posts: postReducer,
+        auth: authReducer,
     },
 
 })
