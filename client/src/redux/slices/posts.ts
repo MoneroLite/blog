@@ -52,4 +52,4 @@ const postsSlice = createSlice({
     }
 })
 
-export const postRedicer = postsSlice.reducer
+export const postReducer = postsSlice.reducer
