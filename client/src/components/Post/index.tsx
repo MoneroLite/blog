@@ -29,7 +29,7 @@ export const Post: any = ({
   if (isLoading) {
     return <PostSkeleton />;
   }
-
+  // console.log(imageUrl);
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
