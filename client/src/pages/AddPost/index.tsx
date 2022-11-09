@@ -1,4 +1,10 @@
-import React, { useMemo, useCallback, useState, useRef } from "react";
+import React, {
+  useMemo,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -6,11 +12,13 @@ import SimpleMDE from "react-simplemde-editor";
 import axios from "../../axios";
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const AddPost = () => {
+  const { id } = useParams();
+  const editMode = Boolean(id);
   const [isLoading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(undefined);
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
@@ -52,7 +60,7 @@ export const AddPost = () => {
   };
 
   const onClickRemoveImage = () => {
-    setImageUrl(null);
+    setImageUrl(undefined);
   };
 
   const onSubmit = async () => {
@@ -62,19 +70,38 @@ export const AddPost = () => {
       const fields = {
         title,
         imageUrl,
-        tags: tags.split(","),
         text,
+        tags: tags.split(","),
       };
 
-      const { data } = await axios.post("/posts", fields);
+      const { data } = editMode
+        ? await axios.patch(`/posts/${id}`, fields)
+        : await axios.post("/posts", fields);
 
-      const id = data._id;
-      navigate(`/posts/${id}`);
+      const _id = editMode ? id : data._id;
+      navigate(`/posts/${_id}`);
     } catch (error) {
       console.warn(error);
       alert("Ошибка при создании статьи");
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then(({ data }) => {
+          setTitle(data.title);
+          setTags(data.tags.join(","));
+          setText(data.text);
+          setImageUrl(data.imageUrl);
+        })
+        .catch((error) => {
+          console.warn(error);
+          alert("Ошибка при получении статьи");
+        });
+    }
+  }, []);
 
   return (
     <Paper style={{ padding: 30 }}>
@@ -134,7 +161,7 @@ export const AddPost = () => {
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
-          Опубликовать
+          {editMode ? "Сохранить" : "Опубликовать"}
         </Button>
         <Button size="large">Отмена</Button>
       </div>
