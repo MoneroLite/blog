@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import styles from "./Post.module.scss";
 import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRemovePost } from "../../redux/slices/posts";
 
 export const Post: any = ({
   id,
@@ -24,7 +26,12 @@ export const Post: any = ({
   isLoading,
   isEditable,
 }) => {
-  const onClickRemove = () => {};
+  const dispatch = useDispatch();
+  const onClickRemove = () => {
+    if (window.confirm("Вы уверены что хотите удалить статью?")) {
+      dispatch(fetchRemovePost(id));
+    }
+  };
 
   if (isLoading) {
     return <PostSkeleton />;
