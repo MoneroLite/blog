@@ -7,7 +7,7 @@ import axios from "../axios";
 import ReactMarkdown from "react-markdown";
 
 export const FullPost = () => {
-  const [data, setData]: any = useState();
+  const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
   const { id } = useParams();
