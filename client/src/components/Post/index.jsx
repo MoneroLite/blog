@@ -12,7 +12,7 @@ import { PostSkeleton } from "./Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRemovePost } from "../../redux/slices/posts";
 
-export const Post: any = ({
+export const Post = ({
   id,
   title,
   createdAt,

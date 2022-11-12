@@ -30,5 +30,14 @@ const PostSchema = new mongoose.Schema({
     timestamps: true,
     }
 )
+// // Duplicate the ID field.
+// PostSchema.virtual('id').get(function(){
+//     return this._id.toHexString();
+// });
+
+// // Ensure virtual fields are serialised.
+// PostSchema.set('toJSON', {
+//     virtuals: true
+// });
 
 export default mongoose.model('Post', PostSchema)

@@ -9,17 +9,13 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import Skeleton from "@mui/material/Skeleton";
 
-interface ICommentsBlock {
-  isLoading: boolean;
-  children: React.ReactNode;
-  items: any;
-}
 
-export const CommentsBlock = (items, children, isLoading = true) => {
+
+export const CommentsBlock = ({ items, children, isLoading = true }) => {
   return (
     <SideBlock title="Комментарии">
       <List>
-        {(isLoading ? [...Array(5)] : items).map((obj: any, index: any) => (
+        {(isLoading ? [...Array(5)] : items).map((obj, index) => (
           <React.Fragment key={index}>
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
